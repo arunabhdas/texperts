@@ -6,6 +6,7 @@ import { PathfindingService } from "@/game/pathfinding/PathfindingService";
 import { BubbleManager } from "@/game/entities/BubbleManager";
 import { EventBus } from "@/game/EventBus";
 import { TileType, MapData } from "@/types";
+import { GAME_DPR } from "@/game/config";
 
 // Default agent configs for the 5 experts
 const DEFAULT_AGENTS: AgentSpriteConfig[] = [
@@ -138,6 +139,7 @@ export class MainScene extends Phaser.Scene {
         color: "#a89e8c",
         backgroundColor: "#2a243380",
         padding: { x: 4, y: 2 },
+        resolution: 2,
       });
       text.setOrigin(0.5, 0);
       text.setDepth(2);
@@ -318,7 +320,8 @@ export class MainScene extends Phaser.Scene {
     const worldWidth = this.mapData.width * TILE_SIZE;
     const worldHeight = this.mapData.height * TILE_SIZE;
     this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
-    this.cameras.main.setZoom(1);
+    // Zoom to compensate for DPR-scaled game resolution
+    this.cameras.main.setZoom(GAME_DPR);
 
     const boardroom = this.zoneManager.getZone("boardroom");
     if (boardroom) {
@@ -342,7 +345,7 @@ export class MainScene extends Phaser.Scene {
 
     this.input.on("wheel", (_pointer: Phaser.Input.Pointer, _gos: unknown[], _dx: number, dy: number) => {
       const cam = this.cameras.main;
-      const newZoom = Phaser.Math.Clamp(cam.zoom - dy * 0.001, 0.5, 3);
+      const newZoom = Phaser.Math.Clamp(cam.zoom - dy * 0.001, 0.5 * GAME_DPR, 3 * GAME_DPR);
       cam.setZoom(newZoom);
     });
 

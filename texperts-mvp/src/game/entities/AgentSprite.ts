@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 import { TILE_SIZE } from "@/game/map/MapGenerator";
-import { GHIBLI_PALETTES } from "@/game/scenes/BootScene";
+import { GHIBLI_PALETTES, AGENT_TEXTURE_SIZE } from "@/game/scenes/BootScene";
 
 export interface AgentSpriteConfig {
   id: string;
@@ -14,9 +14,9 @@ export interface AgentSpriteConfig {
 const SPRITE_RADIUS = 14;
 const BOB_AMPLITUDE = 1.5;
 const BOB_DURATION = 1400;
-const BODY_TEXTURE_SIZE = 64;
 const BODY_DISPLAY_SIZE = 28;
-const BODY_SCALE = BODY_DISPLAY_SIZE / BODY_TEXTURE_SIZE;
+const BODY_SCALE = BODY_DISPLAY_SIZE / AGENT_TEXTURE_SIZE;
+const TEXT_RES = 2; // render text at 2× for crisp display on HiDPI
 
 export class AgentSprite {
   public readonly id: string;
@@ -66,13 +66,13 @@ export class AgentSprite {
     this.selectionRing.setVisible(false);
     this.container.add(this.selectionRing);
 
-    // Agent body — pre-baked gradient texture from BootScene
+    // Agent body — SVG-based texture from BootScene (256×256, scaled to display size)
     const textureKey = `agent_body_${config.color}`;
     this.body = scene.add.image(0, -2, textureKey);
     this.body.setScale(BODY_SCALE);
     this.container.add(this.body);
 
-    // Name label — sans-serif, warm off-white, colored stroke
+    // Name label — sans-serif, warm off-white, colored stroke, high resolution
     const strokeColor = palette ? palette.outline : "#333333";
     this.nameText = scene.add.text(0, SPRITE_RADIUS + 4, config.name, {
       fontSize: "10px",
@@ -80,24 +80,27 @@ export class AgentSprite {
       color: "#e8dfd0",
       stroke: strokeColor,
       strokeThickness: 2,
+      resolution: TEXT_RES,
     });
     this.nameText.setOrigin(0.5, 0);
     this.container.add(this.nameText);
 
-    // Role label — sans-serif, warm gray
+    // Role label — sans-serif, warm gray, high resolution
     this.roleText = scene.add.text(0, SPRITE_RADIUS + 16, config.role, {
       fontSize: "8px",
       fontFamily: "sans-serif",
       color: "#a89e8c",
       stroke: "#1a1520",
       strokeThickness: 1,
+      resolution: TEXT_RES,
     });
     this.roleText.setOrigin(0.5, 0);
     this.container.add(this.roleText);
 
     // Status emoji (above head)
-    this.statusText = scene.add.text(0, -(SPRITE_RADIUS + 12), "😊", {
+    this.statusText = scene.add.text(0, -(SPRITE_RADIUS + 12), "", {
       fontSize: "12px",
+      resolution: TEXT_RES,
     });
     this.statusText.setOrigin(0.5, 0.5);
     this.container.add(this.statusText);
@@ -208,7 +211,7 @@ export class AgentSprite {
     }
 
     this.isMoving = false;
-    this.setStatus("😊");
+    this.setStatus("");
     this.startIdleBob();
     this.startBreathing();
   }
@@ -245,7 +248,7 @@ export class AgentSprite {
       this.container.x,
       this.container.y - SPRITE_RADIUS - 20,
       emoji,
-      { fontSize: "18px" },
+      { fontSize: "18px", resolution: TEXT_RES },
     );
     emote.setOrigin(0.5, 0.5);
     emote.setDepth(20);
@@ -269,13 +272,13 @@ export class AgentSprite {
       skeptical: "🧐",
       excited: "🤩",
       alarmed: "😰",
-      neutral: "😊",
+      neutral: "",
       amused: "😏",
       thinking: "💭",
       speaking: "💬",
       moving: "🚶",
     };
-    this.statusText.setText(emojiMap[emotion] || "😊");
+    this.statusText.setText(emojiMap[emotion] ?? "");
   }
 
   destroy(): void {

@@ -142,6 +142,7 @@ export class BubbleManager {
       color: request.type === "speech" ? "#2a2020" : "#4a4060",
       wordWrap: { width: BUBBLE_MAX_WIDTH - BUBBLE_PADDING * 2 },
       lineSpacing: 2,
+      resolution: 2,
     });
     textObj.setOrigin(0.5, 1);
 

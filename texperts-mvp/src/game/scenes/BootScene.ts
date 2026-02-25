@@ -19,9 +19,13 @@ export const GHIBLI_PALETTES: Record<number, { light: string; mid: string; dark:
   0x9c27b0: { light: "#C8A0D8", mid: "#9E72B4", dark: "#7A508A", outline: "#5E3D6B" }, // Devil
 };
 
+/** Size at which SVG agent textures are rasterized. */
+export const AGENT_TEXTURE_SIZE = 256;
+
 /**
- * BootScene — generates all programmatic textures using Canvas 2D API.
- * Ghibli-inspired warm twilight aesthetic with gradients and watercolor noise.
+ * BootScene — generates all programmatic textures.
+ * Tiles use Canvas 2D with gradients and noise.
+ * Agent bodies use SVG for resolution-independent rendering.
  */
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -29,13 +33,66 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // No external assets to load
+    // Load SVG agent body textures at high resolution
+    for (const [colorKey, palette] of Object.entries(GHIBLI_PALETTES)) {
+      const svg = this.buildAgentSVG(palette, String(colorKey));
+      const dataUrl = `data:image/svg+xml;base64,${btoa(svg)}`;
+      this.load.svg(`agent_body_${colorKey}`, dataUrl, {
+        width: AGENT_TEXTURE_SIZE,
+        height: AGENT_TEXTURE_SIZE,
+      });
+    }
   }
 
   create(): void {
     this.generateTileTextures();
-    this.generateAgentTextures();
     this.scene.start("MainScene");
+  }
+
+  /**
+   * Build an SVG string for a Ghibli-style agent body.
+   * Uses radial gradients for soft shading, a specular highlight, and a warm outline.
+   */
+  private buildAgentSVG(
+    palette: { light: string; mid: string; dark: string; outline: string },
+    id: string,
+  ): string {
+    return [
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">`,
+      `<defs>`,
+      // Ground shadow
+      `<radialGradient id="sh_${id}" cx="50%" cy="78%" r="32%">`,
+      `<stop offset="0%" stop-color="#000" stop-opacity="0.15"/>`,
+      `<stop offset="100%" stop-color="#000" stop-opacity="0"/>`,
+      `</radialGradient>`,
+      // Body gradient (off-center for 3D feel)
+      `<radialGradient id="bd_${id}" cx="44%" cy="42%" r="44%">`,
+      `<stop offset="0%" stop-color="${palette.light}"/>`,
+      `<stop offset="100%" stop-color="${palette.mid}"/>`,
+      `</radialGradient>`,
+      // Specular highlight
+      `<radialGradient id="hl_${id}" cx="40%" cy="36%" r="20%">`,
+      `<stop offset="0%" stop-color="white" stop-opacity="0.4"/>`,
+      `<stop offset="100%" stop-color="white" stop-opacity="0"/>`,
+      `</radialGradient>`,
+      // Subtle inner glow
+      `<radialGradient id="ig_${id}" cx="50%" cy="50%" r="50%">`,
+      `<stop offset="70%" stop-color="${palette.mid}" stop-opacity="0"/>`,
+      `<stop offset="100%" stop-color="${palette.dark}" stop-opacity="0.25"/>`,
+      `</radialGradient>`,
+      `</defs>`,
+      // Ground shadow ellipse
+      `<ellipse cx="32" cy="44" rx="20" ry="7" fill="url(#sh_${id})"/>`,
+      // Main body
+      `<circle cx="32" cy="30" r="22" fill="url(#bd_${id})"/>`,
+      // Inner edge darkening
+      `<circle cx="32" cy="30" r="22" fill="url(#ig_${id})"/>`,
+      // Specular bloom
+      `<circle cx="27" cy="24" r="12" fill="url(#hl_${id})"/>`,
+      // Warm outline
+      `<circle cx="32" cy="30" r="22" fill="none" stroke="${palette.outline}" stroke-width="1.5" stroke-opacity="0.6"/>`,
+      `</svg>`,
+    ].join("");
   }
 
   private generateTileTextures(): void {
@@ -71,72 +128,6 @@ export class BootScene extends Phaser.Scene {
     for (let i = 0; i < data.length; i += 4) {
       if (data[i + 3] === 0) continue;
       const jitter = (Math.random() - 0.5) * 4;
-      data[i] = Math.max(0, Math.min(255, data[i] + jitter));
-      data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + jitter));
-      data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + jitter));
-    }
-    ctx.putImageData(imageData, 0, 0);
-
-    this.textures.addCanvas(key, canvas);
-  }
-
-  private generateAgentTextures(): void {
-    for (const [colorKey, palette] of Object.entries(GHIBLI_PALETTES)) {
-      this.generateAgentBody(`agent_body_${colorKey}`, palette);
-    }
-  }
-
-  private generateAgentBody(key: string, palette: { light: string; mid: string; dark: string; outline: string }): void {
-    const size = 64;
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d")!;
-
-    const cx = size / 2;
-    const cy = size / 2 - 2;
-    const bodyRadius = 22;
-
-    // 1. Ground shadow ellipse
-    const shadowGrad = ctx.createRadialGradient(cx, cy + 10, 0, cx, cy + 10, 20);
-    shadowGrad.addColorStop(0, "rgba(0,0,0,0.12)");
-    shadowGrad.addColorStop(1, "rgba(0,0,0,0.0)");
-    ctx.fillStyle = shadowGrad;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy + 10, 20, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 2. Main body radial gradient
-    const bodyGrad = ctx.createRadialGradient(cx - 4, cy - 4, 0, cx, cy, bodyRadius);
-    bodyGrad.addColorStop(0, palette.light);
-    bodyGrad.addColorStop(1, palette.mid);
-    ctx.fillStyle = bodyGrad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, bodyRadius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 3. Inner highlight (specular bloom)
-    const hlGrad = ctx.createRadialGradient(cx - 5, cy - 6, 0, cx - 5, cy - 6, 12);
-    hlGrad.addColorStop(0, "rgba(255,255,255,0.35)");
-    hlGrad.addColorStop(1, "rgba(255,255,255,0.0)");
-    ctx.fillStyle = hlGrad;
-    ctx.beginPath();
-    ctx.arc(cx - 5, cy - 6, 12, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 4. Warm colored outline
-    ctx.strokeStyle = palette.outline + "99"; // ~0.6 alpha
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(cx, cy, bodyRadius, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // 5. Watercolor noise pass
-    const imageData = ctx.getImageData(0, 0, size, size);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-      if (data[i + 3] < 10) continue;
-      const jitter = (Math.random() - 0.5) * 6;
       data[i] = Math.max(0, Math.min(255, data[i] + jitter));
       data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + jitter));
       data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + jitter));
