@@ -328,6 +328,31 @@ Status: [ ] pending | [~] in progress | [✅] done
 
 ---
 
+## Epic 9: Remaining Tasks (Backlog)
+> 15 tasks deferred from Milestones 3–8. Complete these to reach 100% coverage.
+
+| # | Task | Origin | Why not done |
+|---|---|---|---|
+9.1.1 | 3.4.3 | Bubble overlap prevention between nearby agents | M3 Bubbles | No offset logic for nearby agents |
+9.2.1 | 5.1.6 | Rate limiting (500ms between agent calls) | M5 Claude | Only a sleep delay, not proper rate limiting |
+9.3.1 | 5.4.3 | Test single agent: inject scenario → agent plans → acts → speaks | M5 Claude | Manual testing task, not code |
+9.4.1 | 6.1.1 | LLM-based importance scoring on memory creation | M6 Cognitive | `scoreImportance()` exists but isn't auto-called; importance is hardcoded per action type |
+9.5.1 | 6.3.1 | Plan decomposition (high-level plan → sub-actions) | M6 Cognitive | `Planner.ts` is a stub returning empty |
+9.6.1 | 6.3.2 | Action sequences: move_to → speak → wait → move_to | M6 Cognitive | Stub |
+9.7.1 | 6.3.3 | Re-evaluate plan when significant new perceptions arrive | M6 Cognitive | Stub |
+9.8.1 | 6.6.3 | Emit phase_change events via SSE | M6 Cognitive | PhaseManager exists but isn't wired into Orchestrator tick loop |
+9.9.1 | 7.2.5 | Show relationship summary (opinions of other agents) | M7 UI | Not tracked or displayed |
+9.10.1 | 7.2.6 | Show full conversation log for this agent | M7 UI | Not displayed in inspector |
+9.11.1 | 7.3.2 | Event log filter by type | M7 UI | No filter UI |
+9.12.1 | 7.3.3 | Event log filter by agent | M7 UI | No filter UI |
+9.13.1 | 8.4.3 | "Follow active speaker" toggle | M8 Polish | Camera follows selected agent only, no speaker-tracking toggle |
+9.14.1 | 8.5.2 | Edit agent names, roles, personas, colors in setup | M8 Polish | Setup shows agents but fields aren't editable |
+9.15.1 | 8.5.3 | Edit scenario briefing text in setup | M8 Polish | Setup shows briefing but isn't editable |
+
+**Note**: 8.6.2 (Minimap) and 8.6.3 (Final visual polish pass) are excluded — minimap was a stretch goal and polish is ongoing.
+
+---
+
 ## Summary
 
 | Milestone | Stories | Tasks | Done | Remaining |
