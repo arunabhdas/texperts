@@ -7,7 +7,7 @@ import { useSimulationStore } from "@/store/useSimulationStore";
 const GameCanvas = dynamic(() => import("@/components/GameCanvas"), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-screen text-gray-400">
+    <div className="flex items-center justify-center h-screen text-[#7a7068]">
       Loading simulation...
     </div>
   ),
@@ -55,10 +55,10 @@ export default function SimulationApp() {
       {showSetup && <ScenarioSetup onStart={handleStart} />}
 
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-2 border-b border-gray-800 bg-gray-900">
+      <header className="flex items-center justify-between px-4 py-2 border-b border-[#3d3548] bg-[#211c28]">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-bold tracking-tight">texperts.ai</h1>
-          <span className="text-xs text-gray-500">Multi-Agent Simulation</span>
+          <h1 className="text-lg font-bold tracking-tight text-[#d4a857]">texperts.ai</h1>
+          <span className="text-xs text-[#a89e8c]">Multi-Agent Simulation</span>
         </div>
         <HeaderControls />
       </header>
@@ -69,18 +69,18 @@ export default function SimulationApp() {
           <GameCanvas />
         </div>
 
-        <aside className="w-72 border-l border-gray-800 bg-gray-900 p-3 hidden lg:block overflow-hidden">
+        <aside className="w-72 border-l border-[#3d3548] bg-[#211c28] p-3 hidden lg:block overflow-hidden">
           <AgentInspector />
         </aside>
       </div>
 
       {/* Bottom panel: Event Log + Prompt Injector */}
-      <footer className="h-40 border-t border-gray-800 bg-gray-900 p-3 flex gap-3">
+      <footer className="h-40 border-t border-[#3d3548] bg-[#211c28] p-3 flex gap-3">
         <div className="flex-1 overflow-hidden">
           <EventLog />
         </div>
-        <div className="w-80 shrink-0 border-l border-gray-800 pl-3">
-          <div className="text-xs text-gray-500 mb-1 uppercase tracking-wider">
+        <div className="w-80 shrink-0 border-l border-[#3d3548] pl-3">
+          <div className="text-xs text-[#a89e8c] mb-1 uppercase tracking-wider">
             Prompt Injection
           </div>
           <PromptInjector />

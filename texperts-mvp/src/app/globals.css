@@ -2,15 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ghibli-bg-deep: #1a1520;
+  --ghibli-bg: #211c28;
+  --ghibli-bg-surface: #2a2433;
+  --ghibli-bg-elevated: #342d3d;
+  --ghibli-border: #3d3548;
+  --ghibli-border-subtle: #2f2938;
+  --ghibli-text: #e8dfd0;
+  --ghibli-text-secondary: #a89e8c;
+  --ghibli-text-muted: #7a7068;
+  --ghibli-accent-gold: #d4a857;
+  --ghibli-accent-warm: #c4956a;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
+  background: var(--ghibli-bg-deep);
+  color: var(--ghibli-text);
 }
 
 /* Phaser canvas should fill its container */
 #phaser-game canvas {
   display: block;
+}
+
+/* Warm scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ghibli-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ghibli-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ghibli-bg-elevated);
 }

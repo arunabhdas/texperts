@@ -8,15 +8,15 @@ export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
     parent,
     width: 1280,
     height: 720,
-    backgroundColor: "#1a1a2e",
+    backgroundColor: "#1e1b2e",
     scene: [BootScene, MainScene],
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     render: {
-      pixelArt: true,
-      antialias: false,
+      pixelArt: false,
+      antialias: true,
     },
     physics: {
       default: "arcade",

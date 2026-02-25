@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import { TILE_SIZE } from "@/game/map/MapGenerator";
+import { GHIBLI_PALETTES } from "@/game/scenes/BootScene";
 
 export interface AgentSpriteConfig {
   id: string;
@@ -10,9 +11,12 @@ export interface AgentSpriteConfig {
   startTileY: number;
 }
 
-const SPRITE_RADIUS = 12;
-const BOB_AMPLITUDE = 2;
-const BOB_DURATION = 800;
+const SPRITE_RADIUS = 14;
+const BOB_AMPLITUDE = 1.5;
+const BOB_DURATION = 1400;
+const BODY_TEXTURE_SIZE = 64;
+const BODY_DISPLAY_SIZE = 28;
+const BODY_SCALE = BODY_DISPLAY_SIZE / BODY_TEXTURE_SIZE;
 
 export class AgentSprite {
   public readonly id: string;
@@ -27,12 +31,14 @@ export class AgentSprite {
 
   private scene: Phaser.Scene;
   private container: Phaser.GameObjects.Container;
-  private body: Phaser.GameObjects.Graphics;
+  private body: Phaser.GameObjects.Image;
   private nameText: Phaser.GameObjects.Text;
   private roleText: Phaser.GameObjects.Text;
   private statusText: Phaser.GameObjects.Text;
   private selectionRing: Phaser.GameObjects.Graphics;
   private bobTween: Phaser.Tweens.Tween | null = null;
+  private breatheTween: Phaser.Tweens.Tween | null = null;
+  private selectionPulseTween: Phaser.Tweens.Tween | null = null;
 
   constructor(scene: Phaser.Scene, config: AgentSpriteConfig) {
     this.scene = scene;
@@ -46,49 +52,44 @@ export class AgentSprite {
     const worldX = config.startTileX * TILE_SIZE + TILE_SIZE / 2;
     const worldY = config.startTileY * TILE_SIZE + TILE_SIZE / 2;
 
+    // Get palette for this agent color
+    const palette = GHIBLI_PALETTES[config.color];
+
     // Container holds all parts of the agent
     this.container = scene.add.container(worldX, worldY);
     this.container.setDepth(10);
 
-    // Selection ring (hidden by default)
+    // Selection ring (hidden by default) — warm gold
     this.selectionRing = scene.add.graphics();
-    this.selectionRing.lineStyle(2, 0xffffff, 0.8);
-    this.selectionRing.strokeCircle(0, 0, SPRITE_RADIUS + 4);
+    this.selectionRing.lineStyle(2, 0xd4a857, 0.5);
+    this.selectionRing.strokeCircle(0, 0, SPRITE_RADIUS + 5);
     this.selectionRing.setVisible(false);
     this.container.add(this.selectionRing);
 
-    // Agent body (colored circle)
-    this.body = scene.add.graphics();
-    this.body.fillStyle(config.color, 1);
-    this.body.fillCircle(0, 0, SPRITE_RADIUS);
-    // Darker border
-    this.body.lineStyle(2, Phaser.Display.Color.IntegerToColor(config.color).darken(30).color, 1);
-    this.body.strokeCircle(0, 0, SPRITE_RADIUS);
+    // Agent body — pre-baked gradient texture from BootScene
+    const textureKey = `agent_body_${config.color}`;
+    this.body = scene.add.image(0, -2, textureKey);
+    this.body.setScale(BODY_SCALE);
     this.container.add(this.body);
 
-    // Inner highlight (gives a slight 3D feel)
-    const highlight = scene.add.graphics();
-    highlight.fillStyle(0xffffff, 0.25);
-    highlight.fillCircle(-3, -3, SPRITE_RADIUS * 0.4);
-    this.container.add(highlight);
-
-    // Name label
+    // Name label — sans-serif, warm off-white, colored stroke
+    const strokeColor = palette ? palette.outline : "#333333";
     this.nameText = scene.add.text(0, SPRITE_RADIUS + 4, config.name, {
       fontSize: "10px",
-      fontFamily: "monospace",
-      color: "#ffffff",
-      stroke: "#000000",
+      fontFamily: "sans-serif",
+      color: "#e8dfd0",
+      stroke: strokeColor,
       strokeThickness: 2,
     });
     this.nameText.setOrigin(0.5, 0);
     this.container.add(this.nameText);
 
-    // Role label
+    // Role label — sans-serif, warm gray
     this.roleText = scene.add.text(0, SPRITE_RADIUS + 16, config.role, {
       fontSize: "8px",
-      fontFamily: "monospace",
-      color: "#aaaaaa",
-      stroke: "#000000",
+      fontFamily: "sans-serif",
+      color: "#a89e8c",
+      stroke: "#1a1520",
       strokeThickness: 1,
     });
     this.roleText.setOrigin(0.5, 0);
@@ -105,8 +106,12 @@ export class AgentSprite {
     const hitArea = new Phaser.Geom.Circle(0, 0, SPRITE_RADIUS + 4);
     this.container.setInteractive(hitArea, Phaser.Geom.Circle.Contains);
 
-    // Start idle bobbing
-    this.startIdleBob();
+    // Start idle bobbing + breathing with random phase offset
+    const phaseDelay = Math.random() * BOB_DURATION;
+    scene.time.delayedCall(phaseDelay, () => {
+      this.startIdleBob();
+      this.startBreathing();
+    });
   }
 
   private startIdleBob(): void {
@@ -127,14 +132,49 @@ export class AgentSprite {
     }
   }
 
+  private startBreathing(): void {
+    this.breatheTween = this.scene.tweens.add({
+      targets: this.body,
+      scaleX: BODY_SCALE * 1.02,
+      scaleY: BODY_SCALE * 1.02,
+      duration: BOB_DURATION,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
+  }
+
+  private stopBreathing(): void {
+    if (this.breatheTween) {
+      this.breatheTween.stop();
+      this.breatheTween = null;
+      this.body.setScale(BODY_SCALE);
+    }
+  }
+
   select(): void {
     this.isSelected = true;
     this.selectionRing.setVisible(true);
+
+    // Pulsing gold ring
+    this.selectionPulseTween = this.scene.tweens.add({
+      targets: this.selectionRing,
+      alpha: { from: 0.4, to: 0.7 },
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
   }
 
   deselect(): void {
     this.isSelected = false;
     this.selectionRing.setVisible(false);
+    if (this.selectionPulseTween) {
+      this.selectionPulseTween.stop();
+      this.selectionPulseTween = null;
+    }
+    this.selectionRing.setAlpha(1);
   }
 
   setStatus(emoji: string): void {
@@ -159,6 +199,7 @@ export class AgentSprite {
     this.isMoving = true;
     this.setStatus("🚶");
     this.stopIdleBob();
+    this.stopBreathing();
 
     for (const point of path) {
       await this.tweenToTile(point.x, point.y, speedMs);
@@ -169,6 +210,7 @@ export class AgentSprite {
     this.isMoving = false;
     this.setStatus("😊");
     this.startIdleBob();
+    this.startBreathing();
   }
 
   private tweenToTile(tx: number, ty: number, duration: number): Promise<void> {
@@ -181,7 +223,7 @@ export class AgentSprite {
         x: targetX,
         y: targetY,
         duration,
-        ease: "Linear",
+        ease: "Sine.easeInOut",
         onComplete: () => resolve(),
       });
     });
@@ -238,6 +280,10 @@ export class AgentSprite {
 
   destroy(): void {
     this.stopIdleBob();
+    this.stopBreathing();
+    if (this.selectionPulseTween) {
+      this.selectionPulseTween.stop();
+    }
     this.container.destroy();
   }
 }

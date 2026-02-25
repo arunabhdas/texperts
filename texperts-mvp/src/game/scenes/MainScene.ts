@@ -121,7 +121,7 @@ export class MainScene extends Phaser.Scene {
         width * TILE_SIZE,
         height * TILE_SIZE,
         color,
-        0.08,
+        0.06,
       );
       overlay.setDepth(1);
     }
@@ -134,9 +134,9 @@ export class MainScene extends Phaser.Scene {
       const labelY = zone.bounds.y * TILE_SIZE + 12;
       const text = this.add.text(labelX, labelY, zone.name, {
         fontSize: "11px",
-        fontFamily: "monospace",
-        color: "#666666",
-        backgroundColor: "#f5f0e8cc",
+        fontFamily: "sans-serif",
+        color: "#a89e8c",
+        backgroundColor: "#2a243380",
         padding: { x: 4, y: 2 },
       });
       text.setOrigin(0.5, 0);
@@ -402,7 +402,7 @@ export class MainScene extends Phaser.Scene {
       const g = Math.floor(255 * t);
       const color = (r << 16) | (g << 8) | 0x44;
 
-      const alpha = Math.min(1, (conn.expireAt - now) / 2000) * 0.5;
+      const alpha = Math.min(1, (conn.expireAt - now) / 2000) * 0.35;
 
       this.connectionGraphics.lineStyle(2, color, alpha);
       this.connectionGraphics.beginPath();

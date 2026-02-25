@@ -45,7 +45,7 @@ export default function HeaderControls() {
       <div className="flex items-center gap-2">
         <button
           onClick={handlePlayPause}
-          className="px-3 py-1 rounded text-xs font-medium bg-gray-700 hover:bg-gray-600 transition-colors"
+          className="px-3 py-1 rounded text-xs font-medium bg-[#342d3d] hover:bg-[#3d3548] text-[#e8dfd0] transition-colors"
         >
           {status === "running" ? "Pause" : status === "paused" ? "Resume" : "Start"}
         </button>
@@ -53,7 +53,7 @@ export default function HeaderControls() {
         <button
           onClick={stepSimulation}
           disabled={status === "running"}
-          className="px-3 py-1 rounded text-xs font-medium bg-gray-700 hover:bg-gray-600 disabled:opacity-40 transition-colors"
+          className="px-3 py-1 rounded text-xs font-medium bg-[#342d3d] hover:bg-[#3d3548] text-[#e8dfd0] disabled:opacity-40 transition-colors"
         >
           Step
         </button>
@@ -62,7 +62,7 @@ export default function HeaderControls() {
         <select
           value={speed}
           onChange={(e) => setSpeed(Number(e.target.value))}
-          className="bg-gray-800 text-xs text-gray-300 rounded px-1.5 py-1 border border-gray-700"
+          className="bg-[#2a2433] text-xs text-[#e8dfd0] rounded px-1.5 py-1 border border-[#3d3548]"
         >
           <option value={0.5}>0.5x</option>
           <option value={1}>1x</option>
@@ -70,21 +70,21 @@ export default function HeaderControls() {
           <option value={4}>4x</option>
         </select>
 
-        <span className="text-xs text-gray-500 ml-2">
+        <span className="text-xs text-[#a89e8c] ml-2">
           Tick: {tick} | {status}
         </span>
 
         <button
           onClick={handleExport}
           disabled={events.length === 0}
-          className="px-3 py-1 rounded text-xs font-medium bg-gray-700 hover:bg-gray-600 disabled:opacity-40 transition-colors ml-2"
+          className="px-3 py-1 rounded text-xs font-medium bg-[#342d3d] hover:bg-[#3d3548] text-[#e8dfd0] disabled:opacity-40 transition-colors ml-2"
         >
           Export
         </button>
 
         <button
           onClick={() => setShowSettings(true)}
-          className="px-3 py-1 rounded text-xs font-medium bg-gray-700 hover:bg-gray-600 transition-colors ml-2"
+          className="px-3 py-1 rounded text-xs font-medium bg-[#342d3d] hover:bg-[#3d3548] text-[#e8dfd0] transition-colors ml-2"
         >
           Settings
         </button>

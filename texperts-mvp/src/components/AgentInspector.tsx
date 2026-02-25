@@ -66,10 +66,10 @@ export default function AgentInspector() {
   if (!selectedAgentId || !selectedAgent) {
     return (
       <div className="h-full flex flex-col">
-        <div className="text-xs text-gray-500 mb-2 uppercase tracking-wider">
+        <div className="text-xs text-[#a89e8c] mb-2 uppercase tracking-wider">
           Agent Inspector
         </div>
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-[#7a7068]">
           Click an agent to inspect their memory and plans.
         </p>
       </div>
@@ -77,13 +77,13 @@ export default function AgentInspector() {
   }
 
   const emotionColor: Record<string, string> = {
-    confident: "text-green-400",
-    uncertain: "text-yellow-400",
-    skeptical: "text-red-400",
-    excited: "text-emerald-400",
-    alarmed: "text-orange-400",
-    neutral: "text-gray-400",
-    amused: "text-purple-400",
+    confident: "text-[#9ED8A0]",
+    uncertain: "text-[#F0DDA0]",
+    skeptical: "text-[#E8A49E]",
+    excited: "text-[#9ED8A0]",
+    alarmed: "text-[#c4956a]",
+    neutral: "text-[#a89e8c]",
+    amused: "text-[#C8A0D8]",
   };
 
   return (
@@ -96,13 +96,13 @@ export default function AgentInspector() {
             style={{ backgroundColor: selectedAgent.color }}
           />
           <div>
-            <div className="text-sm font-medium">{selectedAgent.name}</div>
-            <div className="text-xs text-gray-500">{selectedAgent.role}</div>
+            <div className="text-sm font-medium text-[#e8dfd0]">{selectedAgent.name}</div>
+            <div className="text-xs text-[#a89e8c]">{selectedAgent.role}</div>
           </div>
         </div>
         <button
           onClick={() => setSelectedAgent(null)}
-          className="text-xs text-gray-500 hover:text-gray-300"
+          className="text-xs text-[#7a7068] hover:text-[#e8dfd0]"
         >
           x
         </button>
@@ -110,15 +110,15 @@ export default function AgentInspector() {
 
       {/* Status */}
       <div className="flex items-center gap-3 mb-2 text-xs">
-        <span className={emotionColor[selectedAgent.emotion] || "text-gray-400"}>
+        <span className={emotionColor[selectedAgent.emotion] || "text-[#a89e8c]"}>
           {selectedAgent.emotion}
         </span>
-        <span className="text-gray-600">|</span>
-        <span className="text-gray-400">{selectedAgent.status}</span>
+        <span className="text-[#7a7068]">|</span>
+        <span className="text-[#a89e8c]">{selectedAgent.status}</span>
         {selectedAgent.currentZone && (
           <>
-            <span className="text-gray-600">|</span>
-            <span className="text-gray-500">{selectedAgent.currentZone}</span>
+            <span className="text-[#7a7068]">|</span>
+            <span className="text-[#a89e8c]">{selectedAgent.currentZone}</span>
           </>
         )}
       </div>
@@ -128,7 +128,7 @@ export default function AgentInspector() {
         <button
           onClick={() => setTab("memory")}
           className={`px-2 py-0.5 text-xs rounded ${
-            tab === "memory" ? "bg-gray-700 text-white" : "text-gray-500 hover:text-gray-300"
+            tab === "memory" ? "bg-[#342d3d] text-[#e8dfd0]" : "text-[#7a7068] hover:text-[#e8dfd0]"
           }`}
         >
           Memory
@@ -136,7 +136,7 @@ export default function AgentInspector() {
         <button
           onClick={() => setTab("plan")}
           className={`px-2 py-0.5 text-xs rounded ${
-            tab === "plan" ? "bg-gray-700 text-white" : "text-gray-500 hover:text-gray-300"
+            tab === "plan" ? "bg-[#342d3d] text-[#e8dfd0]" : "text-[#7a7068] hover:text-[#e8dfd0]"
           }`}
         >
           Plan
@@ -145,40 +145,40 @@ export default function AgentInspector() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        {loading && <p className="text-xs text-gray-600">Loading...</p>}
+        {loading && <p className="text-xs text-[#7a7068]">Loading...</p>}
 
         {tab === "memory" && memoryData && (
           <div className="space-y-1">
             {memoryData.memories.length === 0 && (
-              <p className="text-xs text-gray-600">No memories yet.</p>
+              <p className="text-xs text-[#7a7068]">No memories yet.</p>
             )}
             {memoryData.memories.map((mem) => (
               <div
                 key={mem.id}
                 className={`text-xs p-1.5 rounded border ${
                   mem.type === "reflection"
-                    ? "border-purple-800 bg-purple-900/20"
+                    ? "border-[#5E3D6B]/40 bg-[#5E3D6B]/10"
                     : mem.type === "plan"
-                      ? "border-blue-800 bg-blue-900/20"
-                      : "border-gray-800 bg-gray-900/50"
+                      ? "border-[#375B7A]/40 bg-[#375B7A]/10"
+                      : "border-[#3d3548] bg-[#211c28]/50"
                 }`}
               >
                 <div className="flex items-center gap-1 mb-0.5">
                   <span
                     className={`text-[10px] uppercase font-medium ${
                       mem.type === "reflection"
-                        ? "text-purple-400"
+                        ? "text-[#C8A0D8]"
                         : mem.type === "plan"
-                          ? "text-blue-400"
-                          : "text-gray-500"
+                          ? "text-[#9EC8E8]"
+                          : "text-[#a89e8c]"
                     }`}
                   >
                     {mem.type}
                   </span>
-                  <span className="text-[10px] text-gray-600">t{mem.tick}</span>
-                  <span className="text-[10px] text-gray-600">imp:{mem.importance}</span>
+                  <span className="text-[10px] text-[#7a7068]">t{mem.tick}</span>
+                  <span className="text-[10px] text-[#7a7068]">imp:{mem.importance}</span>
                 </div>
-                <div className="text-gray-300 leading-tight">{mem.content}</div>
+                <div className="text-[#e8dfd0] leading-tight">{mem.content}</div>
               </div>
             ))}
           </div>
@@ -187,15 +187,15 @@ export default function AgentInspector() {
         {tab === "plan" && (
           <div className="space-y-2">
             <div>
-              <div className="text-[10px] uppercase text-gray-500 mb-1">Current Plan</div>
-              <p className="text-xs text-gray-300">
+              <div className="text-[10px] uppercase text-[#a89e8c] mb-1">Current Plan</div>
+              <p className="text-xs text-[#e8dfd0]">
                 {memoryData?.currentPlan || selectedAgent.currentPlan || "No current plan."}
               </p>
             </div>
             {memoryData?.persona && (
               <div>
-                <div className="text-[10px] uppercase text-gray-500 mb-1">Persona</div>
-                <p className="text-xs text-gray-500 leading-tight">{memoryData.persona}</p>
+                <div className="text-[10px] uppercase text-[#a89e8c] mb-1">Persona</div>
+                <p className="text-xs text-[#a89e8c] leading-tight">{memoryData.persona}</p>
               </div>
             )}
           </div>

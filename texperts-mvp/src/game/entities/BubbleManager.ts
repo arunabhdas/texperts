@@ -138,8 +138,8 @@ export class BubbleManager {
     // Text object (hidden initially if typewriter)
     const textObj = this.scene.add.text(0, 0, "", {
       fontSize: "11px",
-      fontFamily: "monospace",
-      color: request.type === "speech" ? "#1a1a1a" : "#555555",
+      fontFamily: "sans-serif",
+      color: request.type === "speech" ? "#2a2020" : "#4a4060",
       wordWrap: { width: BUBBLE_MAX_WIDTH - BUBBLE_PADDING * 2 },
       lineSpacing: 2,
     });
@@ -223,25 +223,26 @@ export class BubbleManager {
   private drawSpeechBubble(g: Phaser.GameObjects.Graphics, w: number, h: number): void {
     const x = -w / 2;
     const y = -h - POINTER_SIZE;
-    const r = 6; // corner radius
+    const r = 8; // corner radius
 
-    // White fill with subtle shadow
-    g.fillStyle(0x000000, 0.1);
+    // Warm shadow
+    g.fillStyle(0x3d2b1f, 0.06);
     g.fillRoundedRect(x + 2, y + 2, w, h, r);
 
-    g.fillStyle(0xffffff, 0.95);
+    // Warm cream fill
+    g.fillStyle(0xfff8f0, 0.92);
     g.fillRoundedRect(x, y, w, h, r);
-    g.lineStyle(1.5, 0xcccccc, 1);
+    g.lineStyle(1, 0xd4c8b8, 1);
     g.strokeRoundedRect(x, y, w, h, r);
 
     // Triangular pointer
-    g.fillStyle(0xffffff, 0.95);
+    g.fillStyle(0xfff8f0, 0.92);
     g.fillTriangle(
       -4, y + h,
       4, y + h,
       0, y + h + POINTER_SIZE,
     );
-    g.lineStyle(1.5, 0xcccccc, 1);
+    g.lineStyle(1, 0xd4c8b8, 1);
     g.lineBetween(-4, y + h, 0, y + h + POINTER_SIZE);
     g.lineBetween(4, y + h, 0, y + h + POINTER_SIZE);
   }
@@ -250,15 +251,15 @@ export class BubbleManager {
     const x = -w / 2;
     const y = -h - POINTER_SIZE - 10;
 
-    // Dotted/dashed appearance: slightly transparent bg
-    g.fillStyle(0xf0f0ff, 0.85);
+    // Soft lavender fill
+    g.fillStyle(0xf0eef8, 0.85);
     g.fillRoundedRect(x, y, w, h, 8);
-    g.lineStyle(1.5, 0x9999cc, 0.6);
+    g.lineStyle(1.5, 0xa89ec0, 0.6);
     g.strokeRoundedRect(x, y, w, h, 8);
 
     // Trailing thought circles (3 small circles going down)
-    g.fillStyle(0xf0f0ff, 0.85);
-    g.lineStyle(1, 0x9999cc, 0.6);
+    g.fillStyle(0xf0eef8, 0.85);
+    g.lineStyle(1, 0xa89ec0, 0.6);
 
     g.fillCircle(2, y + h + 5, 4);
     g.strokeCircle(2, y + h + 5, 4);

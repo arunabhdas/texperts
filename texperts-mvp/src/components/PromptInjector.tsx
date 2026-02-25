@@ -58,8 +58,8 @@ export default function PromptInjector() {
             onClick={() => setMode("moderator")}
             className={`px-2 py-0.5 text-[10px] rounded ${
               mode === "moderator"
-                ? "bg-orange-700 text-white"
-                : "bg-gray-800 text-gray-400 hover:text-gray-300"
+                ? "bg-[#8a5a30] text-[#e8dfd0]"
+                : "bg-[#2a2433] text-[#7a7068] hover:text-[#e8dfd0]"
             }`}
           >
             Moderator
@@ -68,8 +68,8 @@ export default function PromptInjector() {
             onClick={() => setMode("inner_voice")}
             className={`px-2 py-0.5 text-[10px] rounded ${
               mode === "inner_voice"
-                ? "bg-purple-700 text-white"
-                : "bg-gray-800 text-gray-400 hover:text-gray-300"
+                ? "bg-[#5E3D6B] text-[#e8dfd0]"
+                : "bg-[#2a2433] text-[#7a7068] hover:text-[#e8dfd0]"
             }`}
           >
             Inner Voice
@@ -78,7 +78,7 @@ export default function PromptInjector() {
         <select
           value={targetAgent}
           onChange={(e) => setTargetAgent(e.target.value)}
-          className="bg-gray-800 text-xs text-gray-300 rounded px-1.5 py-0.5 border border-gray-700"
+          className="bg-[#2a2433] text-xs text-[#e8dfd0] rounded px-1.5 py-0.5 border border-[#3d3548]"
         >
           <option value="all">All agents</option>
           {agents.map((a) => (
@@ -99,12 +99,12 @@ export default function PromptInjector() {
               ? "Inject a prompt as moderator..."
               : "Whisper to agent's inner voice..."
           }
-          className="flex-1 bg-gray-800 text-xs text-gray-200 rounded px-2 py-1.5 border border-gray-700 placeholder-gray-600 focus:outline-none focus:border-gray-500"
+          className="flex-1 bg-[#2a2433] text-xs text-[#e8dfd0] rounded px-2 py-1.5 border border-[#3d3548] placeholder-[#7a7068] focus:outline-none focus:border-[#d4a857]"
         />
         <button
           onClick={handleInject}
           disabled={sending || !text.trim()}
-          className="px-3 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-40 transition-colors"
+          className="px-3 py-1 text-xs rounded bg-[#342d3d] hover:bg-[#3d3548] text-[#e8dfd0] disabled:opacity-40 transition-colors"
         >
           Send
         </button>
